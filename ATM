@@ -7,7 +7,7 @@ int Y;
 int language()
 {
 	int m;
-	scanf("%d",&m);
+	scanf("%d", &m);
 	getchar();
 	if (m)
 	{
@@ -38,18 +38,31 @@ Account *tail = NULL;
 
 void getpasswd(Account* pa)
 {
-	
+
 
 	char c;
 	int i = 0;
 	while ((c = getch()) != '\r')
 	{
-		pa->password[i] = c;
-		putchar('*');
-		i++;
+		if (c == '\b')
+		{
+			pa->password[i--] = NULL;
+			printf("\b");
+			printf(" ");
+			printf("\b");
+
+		}
+		if (c!='\b')
+		{
+			pa->password[i] = c;
+			putchar('*');
+			i++;
+		}
 		
+
 	}
-	pa->password[i]={'\0'};
+	printf(".........输入成功，回车继续");
+	pa->password[i] = '\0';
 	return;
 
 }
@@ -104,32 +117,32 @@ void addNodeTR(TR *oNode)//TR链表的连接
 int init()
 {
 	FILE* fp = fopen("D:\\VS2015\\atm.txt", "r");
-	FILE* fp2=fopen("D:\\VS2015\\transation_record.txt", "r");
-	if ((fp == NULL)&&(fp2==NULL))
+	FILE* fp2 = fopen("D:\\VS2015\\transation_record.txt", "r");
+	if ((fp == NULL) && (fp2 == NULL))
 	{
 		return 0;
 	}
 
 	else {
-				while (!feof(fp))//将文件里的数据写到结构体数组中
-				{
-					//申请一块内存空间，然后把地址赋值给指针newNodeP 
-					Account * newNodeP = (Account *)malloc(sizeof(Account));
-					fscanf(fp, "%s %s %s %s %s %f\n", newNodeP->name, newNodeP->username, newNodeP->password, newNodeP->idCard, newNodeP->phone, &newNodeP->money);
+		while (!feof(fp))//将文件里的数据写到结构体数组中
+		{
+			//申请一块内存空间，然后把地址赋值给指针newNodeP 
+			Account * newNodeP = (Account *)malloc(sizeof(Account));
+			fscanf(fp, "%s %s %s %s %s %f\n", newNodeP->name, newNodeP->username, newNodeP->password, newNodeP->idCard, newNodeP->phone, &newNodeP->money);
 
-					addNode(newNodeP);
-				}
-				while (!feof(fp2))
-				{
-					TR * newNodeTr=(TR *)malloc(sizeof(TR));
-					fscanf(fp2, "%s %ld %s %f %f\n", newNodeTr->username, &newNodeTr->timestamp, newNodeTr->type, &newNodeTr->amount,&newNodeTr->money);
-
-					addNodeTR(newNodeTr);
-				}
-				return 1;
-				fclose(fp);
-				fclose(fp2);
+			addNode(newNodeP);
 		}
+		while (!feof(fp2))
+		{
+			TR * newNodeTr = (TR *)malloc(sizeof(TR));
+			fscanf(fp2, "%s %ld %s %f %f\n", newNodeTr->username, &newNodeTr->timestamp, newNodeTr->type, &newNodeTr->amount, &newNodeTr->money);
+
+			addNodeTR(newNodeTr);
+		}
+		return 1;
+		fclose(fp);
+		fclose(fp2);
+	}
 }
 
 
@@ -139,29 +152,29 @@ void printLinkedList()//输出链表里的数据
 	TR* curP1 = trHead;
 	while (curP != NULL)
 	{
-			if (Y)
-			{
+		if (Y)
+		{
 			printf("姓名:%-10s账号:%-10s密码:%-10s身份证:%-25s电话:%-12s余额:%f\n"
-			, curP->name, curP->username, curP->password, curP->idCard, curP->phone, curP->money);
-			}
-			else
-			{
+				, curP->name, curP->username, curP->password, curP->idCard, curP->phone, curP->money);
+		}
+		else
+		{
 			printf("name:%-10s ID:%-10s password:%-10s identity card:%-25s phone:%-12s balance:%f\n"
-			, curP->name, curP->username, curP->password, curP->idCard, curP->phone, curP->money);
-			}
-			
-		
+				, curP->name, curP->username, curP->password, curP->idCard, curP->phone, curP->money);
+		}
+
+
 		curP = curP->next;
 	}
 	while (curP1 != NULL)
 	{
 		if (Y)
 		{
-			printf("账号：%s\t时间：%ld\t交易类型：%s\t交易金额：%f\t剩余金额：%f\n", curP1->username, curP1->timestamp, curP1->type, curP1->amount,curP1->money);
+			printf("账号：%s\t时间：%ld\t交易类型：%s\t交易金额：%f\t剩余金额：%f\n", curP1->username, curP1->timestamp, curP1->type, curP1->amount, curP1->money);
 		}
 		else
 		{
-			printf("ID：%s\t time：%ld\t trade type：%s\t transaction amount：%f\t balance：%f\n", curP1->username, curP1->timestamp, curP1->type, curP1->amount,curP1->money);
+			printf("ID：%s\t time：%ld\t trade type：%s\t transaction amount：%f\t balance：%f\n", curP1->username, curP1->timestamp, curP1->type, curP1->amount, curP1->money);
 		}
 
 		curP1 = curP1->next;
@@ -174,7 +187,7 @@ void exitFunction()//将链表里的数据写到atm.txt文件中
 	Account * curP = head;
 	while (curP != NULL)
 	{
-		fprintf(fp, "%s\t%s\t%s\t%s\t%s\t%f\n", curP->name, curP->username, curP->password, curP->idCard, curP->phone, curP->money);
+		fprintf(fp, "%-12s\t%-20s\t%-7s\t%-20s\t%-20s\t%f\n", curP->name, curP->username, curP->password, curP->idCard, curP->phone, curP->money);
 		curP = curP->next;
 	}
 	fclose(fp);
@@ -186,7 +199,7 @@ void saveTransactionRecord()//交易记录存储到文件transation_record.txt�
 	TR* curP = trHead;
 	while (curP != NULL)
 	{
-		fprintf(fP, "%s\t%ld\t%s\t%f\t%f\n", curP->username, curP->timestamp, curP->type, curP->amount,curP->money);
+		fprintf(fP, "%-20s\t%-15ld\t%-10\t%-10f\t%f\n", curP->username, curP->timestamp, curP->type, curP->amount, curP->money);
 		curP = curP->next;
 	}
 	fclose(fP);
@@ -197,55 +210,55 @@ void saveTransactionRecord()//交易记录存储到文件transation_record.txt�
 void signUp()//开户
 {
 	Account * newNodeP = (Account *)malloc(sizeof(Account));
-		if (Y)
-		{
-			printf("请输入姓名:\n");
-			scanf("%s", newNodeP->name);
+	if (Y)
+	{
+		printf("请输入姓名:\n");
+		scanf("%s", newNodeP->name);
 
-			printf("请输入帐号:\n");
-			scanf("%s", newNodeP->username);
+		printf("请输入帐号:\n");
+		scanf("%s", newNodeP->username);
 
-			printf("请输入密码:\n");
-			scanf("%s", newNodeP->password);
+		printf("请输入密码:\n");
+		scanf("%s", newNodeP->password);
 
-			printf("请输入身份证号码:\n");
-			scanf("%s", newNodeP->idCard);
+		printf("请输入身份证号码:\n");
+		scanf("%s", newNodeP->idCard);
 
-			printf("请输入电话号码:\n");
-			scanf("%s", newNodeP->phone);
-			getchar();
+		printf("请输入电话号码:\n");
+		scanf("%s", newNodeP->phone);
+		getchar();
 
-			newNodeP->money = 0.0f;
+		newNodeP->money = 0.0f;
 
-			addNode(newNodeP);
+		addNode(newNodeP);
 
-			printf("创建成功！\n");
-		}
-		else
-		{
-			printf("Please enter your name:\n");
-			scanf("%s", newNodeP->name);
+		printf("创建成功！\n");
+	}
+	else
+	{
+		printf("Please enter your name:\n");
+		scanf("%s", newNodeP->name);
 
-			printf("Please enter the account number:\n");
-			scanf("%s", newNodeP->username);
+		printf("Please enter the account number:\n");
+		scanf("%s", newNodeP->username);
 
-			printf("enter your PIN:\n");
-			scanf("%s", newNodeP->password);
+		printf("enter your PIN:\n");
+		scanf("%s", newNodeP->password);
 
-			printf("please enter your ID number:\n");
-			scanf("%s", newNodeP->idCard);
+		printf("please enter your ID number:\n");
+		scanf("%s", newNodeP->idCard);
 
-			printf("Please enter your phone number:\n");
-			scanf("%s", newNodeP->phone);
-			getchar();
+		printf("Please enter your phone number:\n");
+		scanf("%s", newNodeP->phone);
+		getchar();
 
-			newNodeP->money = 0.0f;
+		newNodeP->money = 0.0f;
 
-			addNode(newNodeP);
+		addNode(newNodeP);
 
-			printf("for user admin！\n");
-		}
-	
+		printf("for user admin！\n");
+	}
+
 	system("pause");
 }
 Account * curAccount = NULL;//指向当前登录账户的指针 
@@ -266,41 +279,41 @@ int findAccount(Account a)
 
 void updatePassword()//密码修改函数
 {
-		if (Y)
+	if (Y)
+	{
+		printf("请输入旧密码:\n");
+		char oldPassword[100] = { '\0' };
+		scanf("%s", oldPassword);
+		if (strcmp(oldPassword, curAccount->password) == 0)
 		{
-			printf("请输入旧密码:\n");
-			char oldPassword[100] = { '\0' };
-			scanf("%s", oldPassword);
-			if (strcmp(oldPassword, curAccount->password) == 0)
-			{
-				//让其修改 
-				printf("请输入新密码：\n");
-				scanf("%s", curAccount->password);
-				printf("修改成功！\n");
-			}
-			else
-			{
-				printf("旧密码输入错误，拒绝修改！\n");
-			}
+			//让其修改 
+			printf("请输入新密码：\n");
+			scanf("%s", curAccount->password);
+			printf("修改成功！\n");
 		}
 		else
 		{
-			printf("Please importation of old passwords:\n");
-			char oldPassword[100] = { '\0' };
-			scanf("%s", oldPassword);
-			if (strcmp(oldPassword, curAccount->password) == 0)
-			{
-				//让其修改 
-				printf("please enter new password：\n");
-				scanf("%s", curAccount->password);
-				printf("modify successfully！\n");
-			}
-			else
-			{
-				printf("The old password is incorrect and cannot be changed！\n");
-			}
+			printf("旧密码输入错误，拒绝修改！\n");
 		}
-	
+	}
+	else
+	{
+		printf("Please importation of old passwords:\n");
+		char oldPassword[100] = { '\0' };
+		scanf("%s", oldPassword);
+		if (strcmp(oldPassword, curAccount->password) == 0)
+		{
+			//让其修改 
+			printf("please enter new password：\n");
+			scanf("%s", curAccount->password);
+			printf("modify successfully！\n");
+		}
+		else
+		{
+			printf("The old password is incorrect and cannot be changed！\n");
+		}
+	}
+
 }
 
 void homePage()
@@ -313,41 +326,41 @@ void homePage()
 
 void saveMoney()//存款函数
 {
-		float money;
-		if (Y)
-		{
-			printf("请输入存钱金额：");
-			scanf("%f", &money);
-			getchar();
-			curAccount->money += money;
-			printf("存款成功！\n");
-		}
-		else
-		{
-			printf("Please enter the deposit amount：");
-			
-			scanf("%f", &money);
-			getchar();
-			curAccount->money += money;
-			printf("Deposit successfully！\n");
-		}
-	
+	float money;
+	if (Y)
+	{
+		printf("请输入存钱金额：");
+		scanf("%f", &money);
+		getchar();
+		curAccount->money += money;
+		printf("存款成功！\n");
+	}
+	else
+	{
+		printf("Please enter the deposit amount：");
 
-		exitFunction();//保存数据（Account）
+		scanf("%f", &money);
+		getchar();
+		curAccount->money += money;
+		printf("Deposit successfully！\n");
+	}
 
-		TR *newNode = (TR *)malloc(sizeof(TR));
 
-		char t[20] = { "存款/收入" };
+	exitFunction();//保存数据（Account）
 
-		strcpy(newNode->username, curAccount->username);
-		strcpy(newNode->type, t);        //记录交易类型
-		newNode->amount = money;         //记录交易金额
-		newNode->timestamp = time(NULL); //记录当前时间戳
-		newNode->money=curAccount->money;//保存当前余额
+	TR *newNode = (TR *)malloc(sizeof(TR));
 
-		addNodeTR(newNode);     //链表连接（TR）
-		saveTransactionRecord();//保存数据（TR）
-	
+	char t[20] = { "存款/收入" };
+
+	strcpy(newNode->username, curAccount->username);
+	strcpy(newNode->type, t);        //记录交易类型
+	newNode->amount = money;         //记录交易金额
+	newNode->timestamp = time(NULL); //记录当前时间戳
+	newNode->money = curAccount->money;//保存当前余额
+
+	addNodeTR(newNode);     //链表连接（TR）
+	saveTransactionRecord();//保存数据（TR）
+
 }
 
 void drawMoney()//取款函数
@@ -360,7 +373,7 @@ void drawMoney()//取款函数
 	{
 		printf("Please enter the withdrawal amount:");
 	}
-	
+
 	float money;
 	scanf("%f", &money);
 	getchar();
@@ -375,7 +388,7 @@ void drawMoney()//取款函数
 		{
 			printf("---insufficient fund！---");
 		}
-		
+
 	}
 	else
 	{
@@ -397,12 +410,12 @@ void drawMoney()//取款函数
 		strcpy(newNode->type, t);          //记录交易类型
 		newNode->amount = money;           //记录交易金额
 		newNode->timestamp = time(NULL);   //记录当前时间戳
-		newNode->money=curAccount->money;  //保存当前余额
+		newNode->money = curAccount->money;  //保存当前余额
 
 		addNodeTR(newNode);     //链表连接（TR）
 		saveTransactionRecord();//保存数据（TR）
 		return;
-		
+
 	}
 }
 
@@ -444,11 +457,11 @@ void transfer()
 		{
 			printf("Account does not exist！\n");
 		}
-		
+
 	}
 	else
 	{
-		while(1)
+		while (1)
 		{
 			if (Y)
 			{
@@ -458,25 +471,25 @@ void transfer()
 			{
 				printf("Please enter the transfer amount：");
 			}
-			
+
 			int money;
 			scanf("%d", &money);
 			getchar();
 
-			if(money>curAccount->money)
+			if (money>curAccount->money)
 			{
 				if (Y)
 				{
-				printf("当前账户余额不足！\n");
+					printf("当前账户余额不足！\n");
 				}
 				else
 				{
-				printf("The current account balance is insufficient！\n");
+					printf("The current account balance is insufficient！\n");
 				}
 			}
 			else
 			{
-		
+
 				//当前账户余额变化：减少 
 				curAccount->money = curAccount->money - money;
 				//对方账户余额变化：增加
@@ -491,7 +504,7 @@ void transfer()
 				{
 					printf("Transfer success！\n");
 				}
-				
+
 
 				exitFunction();//保存数据（Account）
 
@@ -551,9 +564,9 @@ void signIn() //登录函数
 
 			printf("enter your PIN：");
 		}
-		
+
 		//scanf("%s", a.password);
-		
+
 		getpasswd(&a);
 		getchar();
 		while (1)
@@ -562,23 +575,23 @@ void signIn() //登录函数
 			{
 				if (Y)
 				{
-				printf("---登录成功！---\n");
-				printf("---【1】修改密码---\n");
-				printf("---【2】需要取款---\n");
-				printf("---【3】需要存款---\n");
-				printf("---【4】需要转账---\n");
-				printf("---【5】退出登录---\n");
+					printf("---登录成功！---\n");
+					printf("---【1】修改密码---\n");
+					printf("---【2】需要取款---\n");
+					printf("---【3】需要存款---\n");
+					printf("---【4】需要转账---\n");
+					printf("---【5】退出登录---\n");
 				}
 				else
 				{
-				printf("---login successfully！---\n");
-				printf("---【1】change password---\n");
-				printf("---【2】Need to withdraw money---\n");
-				printf("---【3】liquid funds---\n");
-				printf("---【4】Need to transfer---\n");
-				printf("---【5】Logout---\n");
+					printf("---login successfully！---\n");
+					printf("---【1】change password---\n");
+					printf("---【2】Need to withdraw money---\n");
+					printf("---【3】liquid funds---\n");
+					printf("---【4】Need to transfer---\n");
+					printf("---【5】Logout---\n");
 				}
-				
+
 				int iIint;
 				scanf("%d", &iIint);
 				getchar();
@@ -616,7 +629,7 @@ void signIn() //登录函数
 				break;
 			}
 		}
-		
+
 	}
 
 }
@@ -625,7 +638,7 @@ int main()
 {
 	printf("---【1】中文\Chinese---\n");
 	printf("---【0】英文\English---\n");
-	Y=language();
+	Y = language();
 
 	int q = init();
 	if (Y)
@@ -650,7 +663,7 @@ int main()
 			printf("---onload Function！---\n");
 		}
 	}
-	
+
 	char c;
 	while (1)
 	{
@@ -671,15 +684,15 @@ int main()
 
 		switch (c)
 		{
-			case '1':signUp(); break;
-			case '2':signIn(); break;
-			case '3':
-			{
-				printLinkedList();
-				saveTransactionRecord();
-				exitFunction();
-				exit(NULL);
-			}
+		case '1':signUp(); break;
+		case '2':signIn(); break;
+		case '3':
+		{
+			printLinkedList();
+			saveTransactionRecord();
+			exitFunction();
+			exit(NULL);
+		}
 		}
 	}
 
